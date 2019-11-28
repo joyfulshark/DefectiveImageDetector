@@ -12,6 +12,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.core.Core;
+import org.opencv.android.OpenCVLoader;
+
 public class MainActivity extends AppCompatActivity {
 
     ImageView _imvTestedImage;
@@ -22,6 +27,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // load opencv lib
+        if (!OpenCVLoader.initDebug()) {
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, null);
+        }
+
         setContentView(R.layout.activity_main);
         _imvTestedImage = findViewById(R.id.imv_tested_image);
         _btnSelectImage = findViewById(R.id.btn_select_image);
@@ -37,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         _btnRunTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isDefective = DefectiveImageDetector.isDefective(_testedImageFilePath);
+                boolean isDefective = com.joyfulshark.clipleap.DefectiveImageDetector.isDefective(_testedImageFilePath);
                 if(isDefective) {
                     Toast.makeText(MainActivity.this, "Image is defective!", Toast.LENGTH_SHORT).show();
                 }
@@ -56,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 Uri testedImageUri = data.getData();
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), testedImageUri);
                 _imvTestedImage.setImageBitmap(bitmap);
-                _testedImageFilePath = testedImageUri.getPath();
+                _testedImageFilePath = testedImageUri.getPath(); // TODO: fix path problem here
             } catch (Exception e) {
                 Toast.makeText(this, "Failed to open file!", Toast.LENGTH_SHORT).show();
             }

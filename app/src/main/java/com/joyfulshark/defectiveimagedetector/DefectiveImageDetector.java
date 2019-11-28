@@ -1,4 +1,4 @@
-package com.joyfulshark.clipleap;
+package com.joyfulshark.defectiveimagedetector;
 
 import android.widget.Toast;
 
@@ -9,24 +9,27 @@ import org.opencv.core.MatOfDouble;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.Utils;
+
 
 public class DefectiveImageDetector {
 
     private static final int HIGH_THRESH = 200;
     private static final int LOW_THRESH = 30;
 
-    public boolean loadImage(String iimageFilePath) {
+    public static Mat loadImage(String imageFilePath) {
         Imgcodecs imageCodecs = new Imgcodecs();
-        Mat img = imageCodecs.imread(img_path);
-        return isDefected(img);
+        Mat img = imageCodecs.imread(imageFilePath);
+        if(img.empty()) {
+            return null;
+        }
+        return img;
     }
 
     static boolean isDefective(String imageFilePath){
-        return false;
-    }
-
-    public static boolean isDefected(Mat img) {
+        Mat img = loadImage(imageFilePath);
+        if(img == null) {
+            return true;
+        }
         return isDarkOrBrightImage(img);
     }
 
